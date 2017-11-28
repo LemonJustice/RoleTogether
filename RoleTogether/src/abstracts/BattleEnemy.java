@@ -13,6 +13,8 @@ public abstract class BattleEnemy {
 	protected int def;
 	protected int res;
 	protected int spd;
+	protected int expGiven;
+	protected int FormPos;
 	protected BufferedImage sprite;
 	
 	public BattleEnemy(Game game) {
