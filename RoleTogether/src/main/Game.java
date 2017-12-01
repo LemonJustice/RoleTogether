@@ -2,6 +2,8 @@ package main;
 
 //Classes I made
 import display.Display;
+import entities.Player;
+import management.KeyManager;
 import display.Assets;
 
 //Actual java classes
@@ -22,6 +24,8 @@ public class Game implements Runnable{
 	//Class references
 	Display display;
 	Assets assets;
+	KeyManager keyManager;
+	Player player;
 	
 	//Constructor
 	public Game(String title2, int width2, int height2) {
@@ -32,16 +36,21 @@ public class Game implements Runnable{
 
 	//Run once to create instances of needed classes
 	private void init() {
-		display = new Display(title, width, height);
 		assets.init();
+		keyManager = new KeyManager();
+		display = new Display(title, width, height);
+		display.getFrame().addKeyListener(keyManager);
+		player = new Player(100,100, this, keyManager);
+		
 	}
 
 	//Keeps variable up to date.  Calls other classes' update functions
 	private void update() {
 		//Call update functions here
+		keyManager.tick();
+		player.update();
 		
-		
-		
+		//Camera functions will be needed soon
 		//Calling update stops here
 	}
 	
@@ -53,8 +62,9 @@ public class Game implements Runnable{
 			return;
 		}
 		g = buffer.getDrawGraphics();
+		g.clearRect(0, 0, width, height);
 		//Call render functions here
-		
+		player.render(g);
 		
 		
 		//Calling render stops here
@@ -100,7 +110,7 @@ public class Game implements Runnable{
 		
 	}
 	
-	//Should rest at the very bottom of the class. Makes sure that the program stops runnig when needed
+	//Should rest at the bottom of the class. Makes sure that the program stops runnig when needed
 	public synchronized void stop(){
 		if(!running)
 			return;
@@ -110,6 +120,10 @@ public class Game implements Runnable{
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public KeyManager getKeyManager() {
+		return keyManager;
 	}
 	
 	

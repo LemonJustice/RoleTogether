@@ -9,7 +9,7 @@ import main.Game;
 public abstract class OverworldEntity {
 
 	protected float x, y;
-	protected boolean hostile;
+	protected boolean hostile;  //Determines if bumping into them will cause a battle
 	protected BufferedImage sprite;
 	
 	public OverworldEntity(float x, float y, Game game){
@@ -17,10 +17,8 @@ public abstract class OverworldEntity {
 		this.y = y;
 	}
 
-	public abstract void tick();
+	public abstract void update();
 	
 	public abstract void render(Graphics g);
-	
-	public abstract void walkPattern();
 	
 }

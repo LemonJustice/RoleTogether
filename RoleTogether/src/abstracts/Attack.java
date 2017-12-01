@@ -1,9 +1,10 @@
-package management;
+package abstracts;
 
 import main.Game;
+import java.awt.Graphics;
 
 //Attacks within batttle
-public class Attack {
+public abstract class Attack {
   
   private int mod;        //The amount a stat is modified for an attack
   private int stat;        //which stat is modified: str = 1, intl = 2, def = 3, res = 4, spd = 5
@@ -13,7 +14,7 @@ public class Attack {
   
   private Attack attack;
   
-  public Attack(int stat, int mod, int statDebuff, int effectApplied, int hitRate,){
+  public Attack(int stat, int mod, int statDebuff, int effectApplied, int hitRate){
     this.stat = stat;
     this.mod = mod;
     this.statDebuff = statDebuff;
@@ -21,17 +22,17 @@ public class Attack {
     this.hitRate = hitRate;
     
   }
+ 
+ public abstract void render(Graphics g);
   
- public void render(graphics g);
+ public abstract void update();
   
- public void update();
+ public abstract void target1(Attack attack);
   
- public void target1(Attack attack);
-  
- public void target2(Attack attack)
+ public abstract void target2(Attack attack);
     
- public void target3(Attack attack)
+ public abstract void target3(Attack attack);
     
- public void target4(Attack attack)
+ public abstract void target4(Attack attack);
   
 }

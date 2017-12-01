@@ -14,7 +14,7 @@ public abstract class BattleEnemy {
 	protected int res;
 	protected int spd;
 	protected int expGiven;
-	protected int FormPos;
+	protected int FormPos;  //Icluded for interation with BattleManager
 	protected BufferedImage sprite;
 	
 	public BattleEnemy(Game game) {
