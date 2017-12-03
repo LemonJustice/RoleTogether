@@ -10,7 +10,7 @@ public class Assets {
 	
 	public static BufferedImage player;
 	
-	public static void init() {
+	public void init() {
 		
 		// exampleImage = ImageLoader.loadImage("/textures/exampleImage.png");
 		
