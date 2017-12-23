@@ -29,6 +29,8 @@ public class Player extends OverworldEntity{
 
 	@Override
 	public void update() {
+		if(game.onMenu == true)
+			return;
 		if(keyManager.up) {
 			y -= gridHeight;
 		}else if(keyManager.down) {
@@ -43,7 +45,8 @@ public class Player extends OverworldEntity{
 
 	@Override
 	public void render(Graphics g) {
-		
+		if(game.onMenu == true)
+			return;
 		//placeholder sprite for now
 		g.setColor(blue);
 		g.fillRect((int)x,(int)y, 25, 25);

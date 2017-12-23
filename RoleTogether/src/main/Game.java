@@ -4,6 +4,7 @@ package main;
 import display.Display;
 import entities.Player;
 import management.KeyManager;
+import scenes.MainMenu;
 import display.Assets;
 
 //Actual java classes
@@ -20,13 +21,16 @@ public class Game implements Runnable{
 	private BufferStrategy buffer;
 	Boolean running = false;
 	Thread thread;
+	public boolean onMenu = false;
 	
 	//Class references
 	Display display;
 	Assets assets;
 	KeyManager keyManager;
 	Player player;
+	MainMenu mainMenu;
 	
+
 	//Constructor
 	public Game(String title2, int width2, int height2) {
 		this.width = width2;
@@ -36,10 +40,13 @@ public class Game implements Runnable{
 
 	//Run once to create instances of needed classes
 	private void init() {
+		assets = new Assets();
 		assets.init();
 		keyManager = new KeyManager();
 		display = new Display(title, width, height);
 		display.getFrame().addKeyListener(keyManager);
+		mainMenu = new MainMenu(this);
+		onMenu = true;
 		player = new Player(100,100, this, keyManager);
 		
 	}
@@ -49,6 +56,8 @@ public class Game implements Runnable{
 		//Call update functions here
 		keyManager.tick();
 		player.update();
+		mainMenu.tick();
+		onMenu = mainMenu.getActive();
 		
 		//Camera functions will be needed soon
 		//Calling update stops here
@@ -65,6 +74,7 @@ public class Game implements Runnable{
 		g.clearRect(0, 0, width, height);
 		//Call render functions here
 		player.render(g);
+		mainMenu.render(g);
 		
 		
 		//Calling render stops here
