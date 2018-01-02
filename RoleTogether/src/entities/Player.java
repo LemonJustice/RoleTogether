@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import abstracts.OverworldEntity;
 import main.Game;
 import management.KeyManager;
+import networking.Info;
 
 public class Player extends OverworldEntity{
 	
@@ -14,6 +15,7 @@ public class Player extends OverworldEntity{
 	float gridWidth = 10;
 	float gridHeight = 10;
 	private Color blue = new Color(0, 0, 255, 255);
+	private Info playerInfo;
 	
 	Game game;
 	KeyManager keyManager;
@@ -41,6 +43,7 @@ public class Player extends OverworldEntity{
 			x += gridWidth;
 		}
 		
+		
 	}
 
 	@Override
@@ -52,6 +55,11 @@ public class Player extends OverworldEntity{
 		g.fillRect((int)x,(int)y, 25, 25);
 		//Might be a bit ambitious, but a limited character creator would be neat,,,
 		
+	}
+	
+	public Info getInfo() {
+		playerInfo = new Info(x, y);
+		return playerInfo;
 	}
 
 	

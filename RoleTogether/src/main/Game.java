@@ -2,8 +2,12 @@ package main;
 
 //Classes I made
 import display.Display;
+import entities.FriendPlayer;
 import entities.Player;
 import management.KeyManager;
+import networking.Client;
+import networking.Info;
+import networking.Server;
 import scenes.MainMenu;
 import display.Assets;
 
@@ -19,9 +23,11 @@ public class Game implements Runnable{
 	String title;
 	private Graphics g;
 	private BufferStrategy buffer;
-	Boolean running = false;
+	public Boolean running = false;
 	Thread thread;
 	public boolean onMenu = false;
+	private Info playerInfo;
+
 	
 	//Class references
 	Display display;
@@ -29,6 +35,9 @@ public class Game implements Runnable{
 	KeyManager keyManager;
 	Player player;
 	MainMenu mainMenu;
+	FriendPlayer friendPlayer = null;
+	Client client = null;
+	Server server = null;
 	
 
 	//Constructor
@@ -45,9 +54,10 @@ public class Game implements Runnable{
 		keyManager = new KeyManager();
 		display = new Display(title, width, height);
 		display.getFrame().addKeyListener(keyManager);
+		player = new Player(100,100, this, keyManager);
 		mainMenu = new MainMenu(this);
 		onMenu = true;
-		player = new Player(100,100, this, keyManager);
+	
 		
 	}
 
@@ -58,6 +68,22 @@ public class Game implements Runnable{
 		player.update();
 		mainMenu.tick();
 		onMenu = mainMenu.getActive();
+		if(mainMenu.getClient() != null) {
+			client = mainMenu.getClient();
+			System.out.println("Client:" + mainMenu.otherPlayer().XtoString() + " " +mainMenu.otherPlayer().YtoString());
+			if(friendPlayer == null)
+				friendPlayer = new FriendPlayer(mainMenu.otherPlayer(), mainMenu);
+		}
+		if(mainMenu.getServer() != null) {
+			server = mainMenu.getServer();
+			System.out.println("Server:" + mainMenu.otherPlayer().XtoString() + " " + mainMenu.otherPlayer().YtoString());
+			if(friendPlayer == null)
+				friendPlayer = new FriendPlayer(mainMenu.otherPlayer(), mainMenu);
+		}
+		if(friendPlayer != null) {
+			friendPlayer.update();
+		}
+		
 		
 		//Camera functions will be needed soon
 		//Calling update stops here
@@ -75,6 +101,9 @@ public class Game implements Runnable{
 		//Call render functions here
 		player.render(g);
 		mainMenu.render(g);
+		if(friendPlayer != null) {
+			friendPlayer.render(g);
+		}
 		
 		
 		//Calling render stops here
@@ -134,6 +163,11 @@ public class Game implements Runnable{
 
 	public KeyManager getKeyManager() {
 		return keyManager;
+	}
+	
+	public Info getPlayerInfo() {
+		playerInfo = player.getInfo();
+		return playerInfo;
 	}
 	
 	
