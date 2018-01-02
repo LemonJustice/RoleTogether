@@ -24,12 +24,12 @@ public class Client implements Runnable {
 		this.game = game;
 		clientPlayer = game.getPlayerInfo();
 		try {
-			client = new Socket("localHost", 1000);
+			client = new Socket("localHost", 1000); // searches for server on port 1000 and requests connection
 			isConnected = true;
 			out = client.getOutputStream();
-			OS = new ObjectOutputStream(out);
+			OS = new ObjectOutputStream(out); // stream that contains information sent by server 
 			in = client.getInputStream();
-			IS = new ObjectInputStream(in);
+			IS = new ObjectInputStream(in); // stream that transmits data to server
 			start();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -41,12 +41,11 @@ public class Client implements Runnable {
 	public void run() {
 		while(game.running) {
 		try {
-			clientPlayer = game.getPlayerInfo();
-			hostPlayer =(Info)IS.readObject();
-			Serialize.deserialize("ServerInfo.ser");
-			Serialize.serialization("ClientInfo.ser",clientPlayer);
-			OS.writeObject(clientPlayer);
-			OS.flush();
+			clientPlayer = game.getPlayerInfo(); // updates local player before sending it
+			//IS and OS swap positions in Server and Client because the class waits for it to be read before moving on
+			hostPlayer =(Info)IS.readObject(); // deserializes the host player's information
+			OS.writeObject(clientPlayer); // sends local player information
+			OS.flush(); // clears the stream for better optimization
 		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
 			stop();
@@ -55,12 +54,13 @@ public class Client implements Runnable {
 		
 	}
 	
+	// allows for run() to be ran constantly and independently from other code 
 	public void start() {
 		if(running)
 			return;
 		running = true;
 		thread = new Thread(this);
-		thread.start();
+		thread.start(); // actually executes run() method
 	}
 	
 	public void stop() {

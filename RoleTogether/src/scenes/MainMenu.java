@@ -1,8 +1,10 @@
 package scenes;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 
@@ -13,14 +15,20 @@ import networking.Server;
 
 public class MainMenu {
 	public boolean active = false; 
-	private Game game;
 	private int button = 1;// 1 = client, 2 = server
 	private boolean creatingServer = false;
 	private boolean connected = false;
-	private Font menuFont = new Font("menuFont", Font.PLAIN, 30);
-	private Color menuColor = new Color(255, 0, 0, 255);
-	private Color selectClr = new Color(255, 0, 255, 255);
 	private boolean isClient;
+	private boolean referenceFound = false;
+	private Graphics2D g2;
+	
+	private Font menuFont = new Font("menuFont", Font.PLAIN, 30);
+	private Font titleFont = new Font("menuFont", Font.PLAIN, 50);
+	private Color textColor = new Color(255, 255, 255, 255);
+	private Color selectClr = new Color(255, 255, 255, 255);
+	private Color boxColor = new Color(0, 0, 40, 255);
+	
+	private Game game;
 	private Info hostPlayer = null; 
 	private Info clientPlayer = null;
 	public Server server = null;
@@ -34,25 +42,25 @@ public class MainMenu {
 	public void  tick(){
 	if(game.getKeyManager().keyJustPressed(KeyEvent.VK_ESCAPE))
 		active = !active;
-		if(!active)
+		if(!active) //It only run when Game tells it to
 			return;
-		if(game.getKeyManager().keyJustPressed(KeyEvent.VK_DOWN)||game.getKeyManager().keyJustPressed(KeyEvent.VK_S)) {
-			if(button <= 1) 
+		if(game.getKeyManager().keyJustPressed(KeyEvent.VK_DOWN)||game.getKeyManager().keyJustPressed(KeyEvent.VK_S)) { //both down and s work
+			if(button <= 1) //It cant go below 1
 			button += 1;
-		}else if(game.getKeyManager().keyJustPressed(KeyEvent.VK_UP)||game.getKeyManager().keyJustPressed(KeyEvent.VK_W)) {
-			if(button >= 2)
+		}else if(game.getKeyManager().keyJustPressed(KeyEvent.VK_UP)||game.getKeyManager().keyJustPressed(KeyEvent.VK_W)) { //both up and w work
+			if(button >= 2) //It cant go above 2
 			button -= 1;
 		}
 		if(game.getKeyManager().keyJustPressed(KeyEvent.VK_ENTER)) {
 			creatingServer = true;
-			if(button == 1) {
+			if(button == 1) { //client option
 				client = new Client(game);
 				isClient = true;
 				while(!connected) {
 					connected = client.isConnected();
 				}
 				hostPlayer = client.getHost();
-			}else if(button == 2) {
+			}else if(button == 2) { //server option
 				server = new Server(game);
 				isClient = false;
 				while(!connected) {
@@ -61,13 +69,14 @@ public class MainMenu {
 				clientPlayer = server.getClient();
 				}
 		if(creatingServer) {
-			while(clientPlayer == null && hostPlayer == null) {
-				System.out.println("Still null!!");
+			while(clientPlayer == null && hostPlayer == null) { //We need the reference for later
+				System.out.println("connecting");
 				if(button == 1)
 					hostPlayer = client.getHost();
 				if(button == 2)
 					clientPlayer = server.getClient();		
 			}
+			referenceFound = true;
 		}
 		active = false;
 		}
@@ -78,20 +87,26 @@ public class MainMenu {
 			return;
 		if(!creatingServer) {
 			//render pre-network menu
-			g.setColor(menuColor);
+			g2 = (Graphics2D)g;
+			g.setColor(boxColor);
+			g.setFont(titleFont);
+			g.fillRect(0, 550, 450, 200); //box with options within it
+			g.setColor(textColor);
+			g2.setStroke(new BasicStroke(5));
+			g2.drawRect(0, 550, 450, 200);//Border to the previous box
+			g.drawString("RoleTogether", 50, 600);
 			g.setFont(menuFont);
-			g.drawString("You're in the Main Menu. IT WORKS!", 340, 100);
-			g.drawString("Client", 500, 270);
-			g.drawString("Server", 500, 340);
+			g.drawString("Client", 80, 650);
+			g.drawString("Server", 80, 690);
 			g.setColor(selectClr);
 			if(button == 1) 
-				g.fillRect(470, 255, 10, 10);
+				g.fillRect(40, 635, 10, 10);
 			if(button == 2) 
-				g.fillRect(470, 325, 10, 10);
+				g.fillRect(40, 675, 10, 10);
 		}else if(creatingServer) {
 			//render network menu
-			if(!connected) {
-				g.setColor(menuColor);
+			if(!referenceFound) {
+				g.setColor(textColor);
 				g.setFont(menuFont);
 				g.drawString("Connecting...", 30, 30);
 			}
@@ -103,10 +118,8 @@ public class MainMenu {
 	}
 	
 	public Info otherPlayer() {
-		if(hostPlayer == null && clientPlayer == null) {
-			System.out.println("They are both null!!");
+		if(hostPlayer == null && clientPlayer == null)
 			return null;
-		}
 		if(isClient) {
 			return client.getHost();
 		}else{

@@ -30,16 +30,16 @@ public class FriendPlayer {
 	}
 
 	public void update() {
-		if(client != null) 
+		if(client != null)
 			myInfo = client.getHost();
 		if(server != null)
 			myInfo = server.getClient();
-		x = myInfo.getX();
+		x = myInfo.getX(); // extracts values from information class
 		y = myInfo.getY();
 	}
 
 	public void render(Graphics g) {
-		g.setColor(red);
+		g.setColor(red); // the other player is red for now
 		g.fillRect((int)x, (int)y, 25, 25);
 		System.out.println("drawn");
 	}

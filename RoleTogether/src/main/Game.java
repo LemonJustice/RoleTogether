@@ -71,13 +71,13 @@ public class Game implements Runnable{
 		if(mainMenu.getClient() != null) {
 			client = mainMenu.getClient();
 			System.out.println("Client:" + mainMenu.otherPlayer().XtoString() + " " +mainMenu.otherPlayer().YtoString());
-			if(friendPlayer == null)
+			if(friendPlayer == null) //so that this only initializes once
 				friendPlayer = new FriendPlayer(mainMenu.otherPlayer(), mainMenu);
 		}
 		if(mainMenu.getServer() != null) {
 			server = mainMenu.getServer();
 			System.out.println("Server:" + mainMenu.otherPlayer().XtoString() + " " + mainMenu.otherPlayer().YtoString());
-			if(friendPlayer == null)
+			if(friendPlayer == null) //so that this only initializes once
 				friendPlayer = new FriendPlayer(mainMenu.otherPlayer(), mainMenu);
 		}
 		if(friendPlayer != null) {
@@ -138,7 +138,7 @@ public class Game implements Runnable{
 		
 	}
 
-	//Makes sure that it is running and whatnot
+	// allows for run() to be ran constantly and independently from other code 
 	public synchronized void start(){
 		if(running)
 			return;
