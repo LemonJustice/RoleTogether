@@ -24,7 +24,7 @@ public class Client implements Runnable {
 		this.game = game;
 		clientPlayer = game.getPlayerInfo();
 		try {
-			client = new Socket("localHost", 1000); // searches for server on port 1000 and requests connection
+			client = new Socket("localHost", 1000); 
 			isConnected = true;
 			out = client.getOutputStream();
 			OS = new ObjectOutputStream(out); // stream that contains information sent by server 

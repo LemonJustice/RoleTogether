@@ -70,13 +70,11 @@ public class Game implements Runnable{
 		onMenu = mainMenu.getActive();
 		if(mainMenu.getClient() != null) {
 			client = mainMenu.getClient();
-			System.out.println("Client:" + mainMenu.otherPlayer().XtoString() + " " +mainMenu.otherPlayer().YtoString());
 			if(friendPlayer == null) //so that this only initializes once
 				friendPlayer = new FriendPlayer(mainMenu.otherPlayer(), mainMenu);
 		}
 		if(mainMenu.getServer() != null) {
 			server = mainMenu.getServer();
-			System.out.println("Server:" + mainMenu.otherPlayer().XtoString() + " " + mainMenu.otherPlayer().YtoString());
 			if(friendPlayer == null) //so that this only initializes once
 				friendPlayer = new FriendPlayer(mainMenu.otherPlayer(), mainMenu);
 		}

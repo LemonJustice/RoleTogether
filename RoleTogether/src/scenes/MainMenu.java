@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 
+import display.Assets;
 import main.Game;
 import networking.Client;
 import networking.Info;
@@ -15,18 +16,19 @@ import networking.Server;
 
 public class MainMenu {
 	public boolean active = false; 
-	private int button = 1;// 1 = client, 2 = server
+	private int button = 1;// 1 = client, 2 = server, 3 = options
 	private boolean creatingServer = false;
 	private boolean connected = false;
 	private boolean isClient;
 	private boolean referenceFound = false;
+	private boolean isOptions = false;
 	private Graphics2D g2;
 	
 	private Font menuFont = new Font("menuFont", Font.PLAIN, 30);
-	private Font titleFont = new Font("menuFont", Font.PLAIN, 50);
-	private Color textColor = new Color(255, 255, 255, 255);
-	private Color selectClr = new Color(255, 255, 255, 255);
-	private Color boxColor = new Color(0, 0, 40, 255);
+	private Font titleFont = new Font("menuFont", Font.PLAIN, 70);
+	private Color titleColor = new Color(60, 27, 0, 255);
+	private Color textColor = new Color(0, 27, 55, 255);
+
 	
 	private Game game;
 	private Info hostPlayer = null; 
@@ -44,16 +46,16 @@ public class MainMenu {
 		active = !active;
 		if(!active) //It only run when Game tells it to
 			return;
-		if(game.getKeyManager().keyJustPressed(KeyEvent.VK_DOWN)||game.getKeyManager().keyJustPressed(KeyEvent.VK_S)) { //both down and s work
-			if(button <= 1) //It cant go below 1
+		if(game.getKeyManager().keyJustPressed(KeyEvent.VK_RIGHT)||game.getKeyManager().keyJustPressed(KeyEvent.VK_D)) { //both down and s work
+			if(button < 3) //It cant go above 3
 			button += 1;
-		}else if(game.getKeyManager().keyJustPressed(KeyEvent.VK_UP)||game.getKeyManager().keyJustPressed(KeyEvent.VK_W)) { //both up and w work
-			if(button >= 2) //It cant go above 2
+		}else if(game.getKeyManager().keyJustPressed(KeyEvent.VK_LEFT)||game.getKeyManager().keyJustPressed(KeyEvent.VK_A)) { //both up and w work
+			if(button > 1) //It cant go below 1
 			button -= 1;
 		}
-		if(game.getKeyManager().keyJustPressed(KeyEvent.VK_ENTER)) {
-			creatingServer = true;
+		if(game.getKeyManager().keyJustPressed(KeyEvent.VK_ENTER)) { //maybe do another menu for ip and host
 			if(button == 1) { //client option
+				creatingServer = true;
 				client = new Client(game);
 				isClient = true;
 				while(!connected) {
@@ -61,16 +63,18 @@ public class MainMenu {
 				}
 				hostPlayer = client.getHost();
 			}else if(button == 2) { //server option
+				creatingServer = true;
 				server = new Server(game);
 				isClient = false;
 				while(!connected) {
 					connected = server.isConnected();
 				}
 				clientPlayer = server.getClient();
-				}
+			}else if(button == 3)
+				isOptions = true;//Run an options menu soon
 		if(creatingServer) {
 			while(clientPlayer == null && hostPlayer == null) { //We need the reference for later
-				System.out.println("connecting");
+				referenceFound = false;
 				if(button == 1)
 					hostPlayer = client.getHost();
 				if(button == 2)
@@ -86,31 +90,22 @@ public class MainMenu {
 		if(!active)
 			return;
 		if(!creatingServer) {
-			//render pre-network menu
-			g2 = (Graphics2D)g;
-			g.setColor(boxColor);
-			g.setFont(titleFont);
-			g.fillRect(0, 550, 450, 200); //box with options within it
-			g.setColor(textColor);
-			g2.setStroke(new BasicStroke(5));
-			g2.drawRect(0, 550, 450, 200);//Border to the previous box
-			g.drawString("RoleTogether", 50, 600);
-			g.setFont(menuFont);
-			g.drawString("Client", 80, 650);
-			g.drawString("Server", 80, 690);
-			g.setColor(selectClr);
-			if(button == 1) 
-				g.fillRect(40, 635, 10, 10);
-			if(button == 2) 
-				g.fillRect(40, 675, 10, 10);
+			renBaseMain(g);
 		}else if(creatingServer) {
 			//render network menu
-			if(!referenceFound) {
 				g.setColor(textColor);
 				g.setFont(menuFont);
 				g.drawString("Connecting...", 30, 30);
-			}
 		}
+	}
+	
+	public void renBaseMain(Graphics g) {
+		if(button == 1) 
+			g.drawImage(Assets.clientSelect, 0, 0, null);
+		if(button == 2) 
+			g.drawImage(Assets.serverSelect, 0, 0, null);
+		if(button == 3) 
+			g.drawImage(Assets.helpSelect, 0, 0, null);
 	}
 	
 	public boolean getActive() {
