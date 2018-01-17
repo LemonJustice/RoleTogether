@@ -6,7 +6,9 @@ import java.awt.Graphics;
 import networking.Client;
 import networking.Info;
 import networking.Server;
+import scenes.ClientMenu;
 import scenes.MainMenu;
+import scenes.ServerMenu;
 
 public class FriendPlayer {
 	private float x= 100;
@@ -18,14 +20,14 @@ public class FriendPlayer {
 	
 	private Color red = new Color(255, 0 ,0, 255);
 	
-	public FriendPlayer( Info info, MainMenu mainMenu) {
+	public FriendPlayer( Info info, ClientMenu client, ServerMenu server) {
 		this.info = info;
 		x = info.getX();
 		y = info.getY();
-		if(mainMenu.isClient()) {
-			client = mainMenu.getClient();
+		if(client != null) {
+			this.client = client.getClient();
 		}else {
-			server = mainMenu.getServer();
+			this.server = server.getServer();
 		}
 	}
 
@@ -41,7 +43,6 @@ public class FriendPlayer {
 	public void render(Graphics g) {
 		g.setColor(red); // the other player is red for now
 		g.fillRect((int)x, (int)y, 25, 25);
-		System.out.println("drawn");
 	}
 
 }

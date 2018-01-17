@@ -19,12 +19,12 @@ public class Client implements Runnable {
 	private boolean isConnected;
 	
 
-	
-	public Client(Game game) {
+
+	public Client(Game game, String IP, int port) {
 		this.game = game;
 		clientPlayer = game.getPlayerInfo();
 		try {
-			client = new Socket("localHost", 1000); 
+			client = new Socket("127.0.0.1", 1000); 
 			isConnected = true;
 			out = client.getOutputStream();
 			OS = new ObjectOutputStream(out); // stream that contains information sent by server 

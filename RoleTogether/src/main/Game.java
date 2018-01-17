@@ -8,7 +8,10 @@ import management.KeyManager;
 import networking.Client;
 import networking.Info;
 import networking.Server;
+import scenes.ClientMenu;
 import scenes.MainMenu;
+import scenes.OptionsMenu;
+import scenes.ServerMenu;
 import display.Assets;
 
 //Actual java classes
@@ -25,8 +28,10 @@ public class Game implements Runnable{
 	private BufferStrategy buffer;
 	public Boolean running = false;
 	Thread thread;
+	public int menuButton = 0;
 	public boolean onMenu = false;
 	private Info playerInfo;
+	boolean firstTry = true;
 
 	
 	//Class references
@@ -38,6 +43,9 @@ public class Game implements Runnable{
 	FriendPlayer friendPlayer = null;
 	Client client = null;
 	Server server = null;
+	OptionsMenu optionsMenu = null;
+	ClientMenu clientMenu = null;
+	ServerMenu serverMenu = null;
 	
 
 	//Constructor
@@ -67,24 +75,59 @@ public class Game implements Runnable{
 		keyManager.tick();
 		player.update();
 		mainMenu.tick();
-		onMenu = mainMenu.getActive();
-		if(mainMenu.getClient() != null) {
-			client = mainMenu.getClient();
-			if(friendPlayer == null) //so that this only initializes once
-				friendPlayer = new FriendPlayer(mainMenu.otherPlayer(), mainMenu);
+		menuButton = mainMenu.getButton();
+		if(!mainMenu.getActive()) {
+		 			if(menuButton == 1) {//Client
+		 				if(clientMenu == null) {
+		 					clientMenu = new ClientMenu(this, mainMenu);
+		 				}
+		 				clientMenu.active = true;
+		 			}
+		 			 if(menuButton == 2) {//Server
+		 				if(serverMenu == null) {
+		 					serverMenu = new ServerMenu(this, mainMenu);
+		 				}
+		 				serverMenu.active = true;
+		 			 }
+		 			 if(menuButton == 3) {//Options
+		 				if(optionsMenu == null) {
+		 					optionsMenu = new OptionsMenu(this, mainMenu);
+		 				}
+		 				optionsMenu.active = true;
+		 			 }
+		if(clientMenu != null) {
+			clientMenu.tick();
+			if(!clientMenu.active) {
+				client = clientMenu.getClient();
+				if(friendPlayer == null) {
+					friendPlayer = new FriendPlayer(client.getHost(),clientMenu, null);
+					onMenu = false;
+					}
+				}
+			} else if(serverMenu != null) {
+			serverMenu.tick();
+			if(!serverMenu.active) {
+				server = serverMenu.getServer();
+				if(friendPlayer == null) {
+					friendPlayer = new FriendPlayer(server.getClient(), null, serverMenu);
+					onMenu = false;
+					}
+				}
+			}
+		if(optionsMenu != null)
+			optionsMenu.tick();
 		}
-		if(mainMenu.getServer() != null) {
-			server = mainMenu.getServer();
-			if(friendPlayer == null) //so that this only initializes once
-				friendPlayer = new FriendPlayer(mainMenu.otherPlayer(), mainMenu);
-		}
-		if(friendPlayer != null) {
+	
+		
+		if(friendPlayer != null) 
 			friendPlayer.update();
-		}
+		
+		 //Maybe a pause menu where the onMenu makes more sense
 		
 		
 		//Camera functions will be needed soon
 		//Calling update stops here
+		
 	}
 	
 	//Draws the stuff on screen.  Calls other classes' update functions
@@ -99,6 +142,15 @@ public class Game implements Runnable{
 		//Call render functions here
 		player.render(g);
 		mainMenu.render(g);
+		if(onMenu) {
+		if(clientMenu != null)
+			clientMenu.render(g);
+		if(serverMenu != null)
+			serverMenu.render(g);
+		if(optionsMenu != null)
+			optionsMenu.render(g);
+		}
+		
 		if(friendPlayer != null) {
 			friendPlayer.render(g);
 		}
