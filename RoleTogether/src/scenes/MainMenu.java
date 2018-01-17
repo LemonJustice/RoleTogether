@@ -42,7 +42,7 @@ public class MainMenu {
 	}
 	
 	public void  tick(){
-	if(game.getKeyManager().keyJustPressed(KeyEvent.VK_ESCAPE))
+		if(game.getKeyManager().keyJustPressed(KeyEvent.VK_ESCAPE))
 		active = !active;
 		if(!active) //It only run when Game tells it to
 			return;
@@ -54,34 +54,6 @@ public class MainMenu {
 			button -= 1;
 		}
 		if(game.getKeyManager().keyJustPressed(KeyEvent.VK_ENTER)) { //maybe do another menu for ip and host
-			if(button == 1) { //client option
-				creatingServer = true;
-				client = new Client(game);
-				isClient = true;
-				while(!connected) {
-					connected = client.isConnected();
-				}
-				hostPlayer = client.getHost();
-			}else if(button == 2) { //server option
-				creatingServer = true;
-				server = new Server(game);
-				isClient = false;
-				while(!connected) {
-					connected = server.isConnected();
-				}
-				clientPlayer = server.getClient();
-			}else if(button == 3)
-				isOptions = true;//Run an options menu soon
-		if(creatingServer) {
-			while(clientPlayer == null && hostPlayer == null) { //We need the reference for later
-				referenceFound = false;
-				if(button == 1)
-					hostPlayer = client.getHost();
-				if(button == 2)
-					clientPlayer = server.getClient();		
-			}
-			referenceFound = true;
-		}
 		active = false;
 		}
 	}
@@ -89,14 +61,7 @@ public class MainMenu {
 	public void render(Graphics g){
 		if(!active)
 			return;
-		if(!creatingServer) {
-			renBaseMain(g);
-		}else if(creatingServer) {
-			//render network menu
-				g.setColor(textColor);
-				g.setFont(menuFont);
-				g.drawString("Connecting...", 30, 30);
-		}
+			renBaseMain(g); 
 	}
 	
 	public void renBaseMain(Graphics g) {
@@ -112,23 +77,7 @@ public class MainMenu {
 		return active;
 	}
 	
-	public Info otherPlayer() {
-		if(hostPlayer == null && clientPlayer == null)
-			return null;
-		if(isClient) {
-			return client.getHost();
-		}else{
-			return server.getClient();
-		}
-	
-	}
-	public Client getClient(){
-		return client;
-	}
-	public Server getServer() {
-		return server;
-	}
-	public boolean isClient() {
-		return isClient;
+	public int getButton() {
+		return button;
 	}
 }

@@ -15,7 +15,7 @@ public class Server implements Runnable{
 	private Game game;
 	private boolean isConnected = false;
 	
-	public Server(Game game) {
+	public Server(Game game, int port) {
 		this.game = game;
 		hostPlayer = game.getPlayerInfo();
 		try {
