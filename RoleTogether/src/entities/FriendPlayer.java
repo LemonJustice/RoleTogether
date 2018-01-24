@@ -17,6 +17,8 @@ public class FriendPlayer {
 	private Client client = null;
 	private Info myInfo;
 	private Info info;
+	int gridHeight = 25;
+	int gridWidth = 25;
 	
 	private Color red = new Color(255, 0 ,0, 255);
 	
@@ -42,7 +44,7 @@ public class FriendPlayer {
 
 	public void render(Graphics g) {
 		g.setColor(red); // the other player is red for now
-		g.fillRect((int)x, (int)y, 25, 25);
+		g.fillRect((int)x, (int)y, gridHeight, gridWidth);
 	}
 
 }
