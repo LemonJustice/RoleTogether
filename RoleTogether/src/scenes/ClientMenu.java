@@ -42,7 +42,6 @@ public class ClientMenu {
 		}
 		if(button == 3) {
 			if(game.getKeyManager().keyJustPressed(KeyEvent.VK_ENTER)) {
-				active = false;
 				client = new Client(game, "127.0.0.1", 1000);
 					hostPlayer = client.getHost();
 					while(hostPlayer == null) {
@@ -57,7 +56,7 @@ public class ClientMenu {
 	
 	
 	public void render(Graphics g) {
-		if(active == false)
+		if(!active)
 			return;
 		if(button == 1) 
 			g.drawImage(Assets.clientMenuIP, 0, 0, null);

@@ -11,7 +11,7 @@ import networking.Server;
 
 public class ServerMenu {
 
-	public boolean active;
+	public boolean active = true;
 	public int button;// 1 = Port , 2 = Create
 	public static boolean connected = false;
 	
@@ -35,7 +35,6 @@ public class ServerMenu {
 		
 		if(!active)
 			return;
-		
 		if(game.getKeyManager().keyJustPressed(KeyEvent.VK_DOWN)||game.getKeyManager().keyJustPressed(KeyEvent.VK_S)) { //both down and s work
 			if(button < 2) //It cant go above 2
 			button += 1;
@@ -45,13 +44,15 @@ public class ServerMenu {
 		}
 		if(button == 2) {
 			if(game.getKeyManager().keyJustPressed(KeyEvent.VK_ENTER)) {
-				active = false;
 				server = new Server(game, 1000);
 				clientPlayer = server.getClient();
 				while(clientPlayer == null) {
 					clientPlayer = server.getClient();
+					System.out.println("Stuck!");
 				}
 				connected = true;
+				active = false;
+				System.out.println("Done!");
 			}
 		}
 	}

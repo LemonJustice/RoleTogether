@@ -16,6 +16,7 @@ import display.Assets;
 
 //Actual java classes
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
 
 public class Game implements Runnable{
@@ -77,36 +78,43 @@ public class Game implements Runnable{
 		mainMenu.tick();
 		menuButton = mainMenu.getButton();
 		if(!mainMenu.getActive()) {
-		 			if(menuButton == 1) {//Client
-		 				if(clientMenu == null) {
+			if(menuButton == 1) {//Client
+		 			if(clientMenu == null) {
 		 					clientMenu = new ClientMenu(this, mainMenu);
 		 				}
-		 				clientMenu.active = true;
+		 				if(!clientMenu.getConnect()) {
+		 					clientMenu.active = true;
+		 				}
 		 			}
 		 			 if(menuButton == 2) {//Server
 		 				if(serverMenu == null) {
 		 					serverMenu = new ServerMenu(this, mainMenu);
 		 				}
-		 				serverMenu.active = true;
+		 				if(!serverMenu.getConnect()) {
+		 					serverMenu.active = true;
+		 				}
 		 			 }
 		 			 if(menuButton == 3) {//Options
 		 				if(optionsMenu == null) {
 		 					optionsMenu = new OptionsMenu(this, mainMenu);
 		 				}
-		 				optionsMenu.active = true;
+		 				if(!serverMenu.getConnect() && !clientMenu.getConnect()) {
+		 					optionsMenu.active = true;
+		 				}
 		 			 }
 		if(clientMenu != null) {
 			clientMenu.tick();
-			if(!clientMenu.active) {
+			if(clientMenu.connected) {
 				client = clientMenu.getClient();
 				if(friendPlayer == null) {
 					friendPlayer = new FriendPlayer(client.getHost(),clientMenu, null);
 					onMenu = false;
 					}
 				}
-			} else if(serverMenu != null) {
+			}
+		if(serverMenu != null) {
 			serverMenu.tick();
-			if(!serverMenu.active) {
+			if(serverMenu.connected) {
 				server = serverMenu.getServer();
 				if(friendPlayer == null) {
 					friendPlayer = new FriendPlayer(server.getClient(), null, serverMenu);
@@ -130,7 +138,7 @@ public class Game implements Runnable{
 		
 	}
 	
-	//Draws the stuff on screen.  Calls other classes' update functions
+	//Draws the stuff on screen.  Calls other classes' render functions
 	private void render() {
 		buffer = display.getCanvas().getBufferStrategy();
 		if(buffer == null){

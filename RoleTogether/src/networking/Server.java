@@ -14,31 +14,33 @@ public class Server implements Runnable{
 	private Info hostPlayer;
 	private Game game;
 	private boolean isConnected = false;
+	private boolean first = true;
 	
 	public Server(Game game, int port) {
 		this.game = game;
 		hostPlayer = game.getPlayerInfo();
-		try {
-			serverSocket = new ServerSocket(1000); //makes new server on port 1000
-			Socket server = serverSocket.accept(); //accepts the clients request to connect
-			isConnected = true;
-			IS = new ObjectInputStream(server.getInputStream()); //Stream that contains information sent from client
-			OS = new ObjectOutputStream(server.getOutputStream()); //Stream that transmits data to client
-			start();
-		} catch (IOException e) {
-			e.printStackTrace();
-			stop();
-		}
+		start();
 	}
 
 	@Override
 	public void run() {
 		while(game.running) {
 		try {
+			if(first) {
+				first = false;
+				serverSocket = new ServerSocket(1000); //makes new server on port 1000
+				Socket server = serverSocket.accept(); //accepts the clients request to connect
+				System.out.println("Accepted");
+				isConnected = true;
+				IS = new ObjectInputStream(server.getInputStream()); //Stream that contains information sent from client
+				OS = new ObjectOutputStream(server.getOutputStream()); //Stream that transmits data to client
+			}
 			hostPlayer = game.getPlayerInfo(); // updates local player info before sending it
 			//IS and OS swap positions in Server and Client because the class waits for it to be read before moving on
 			OS.writeObject(hostPlayer); //sends local player information
+			System.out.println("Written");
 			clientPlayer = (Info)IS.readObject(); // deserializes the clients information class
+			System.out.println("read!");
 			OS.flush(); // empties the stream so it can run better
 		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
